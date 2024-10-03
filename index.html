@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random User Profile Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #e5e7eb; 
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center h-screen">
+    <div class="bg-white shadow-lg rounded-lg p-6 w-80">
+        <h1 class="text-2xl font-bold text-center mb-4">Random User Profile</h1>
+        <button id="generate-btn" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200">Generate </button>
+        <div id="profl" class="mt-4 text-center"></div>
+    </div>
+
+    <script>
+        document.getElementById('generate-btn').addEventListener('click', gnrt);
+
+        function gnrt() {
+            const reqObj = new XMLHttpRequest();
+            reqObj.open('GET', 'https://randomuser.me/api/');
+            reqObj.send();
+
+            reqObj.onreadystatechange = () => {
+                if (reqObj.readyState === 4) {
+                    if (reqObj.status === 200) {
+                        const arrayData = JSON.parse(reqObj.responseText);
+                        const user = arrayData.results[0];
+                        const prflPic = user.picture.large;
+
+                        
+                        document.getElementById('profl').innerHTML = `
+                            <img src="${prflPic}" alt="Profile Picture" class="w-32 h-32 rounded-full mx-auto mb-4 border-2 border-blue-500">
+                            <h2 class="text-xl font-semibold">${user.name.first} ${user.name.last}</h2>
+                            <p class="text-gray-700">Gender: ${user.gender}</p>
+                            <p class="text-gray-700">Email: ${user.email}</p>
+                            <p class="text-gray-700">Location: ${user.location.city}, ${user.location.country}</p>
+                            <p class="text-gray-700">DOB: ${new Date(user.dob.date).toLocaleDateString()}</p>
+                            <p class="text-gray-700">Phone: ${user.phone}</p>
+                            <p class="text-gray-700">Nationality: ${user.nat}</p>
+                        `;
+                    } else {
+                        alert("Error: Unable to fetch user data.");
+                    }
+                }
+            };
+        }
+    </script>
+</body>
+</html>
